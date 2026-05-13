@@ -1,34 +1,22 @@
 import React from 'react';
+import { v4 as uuidv4 } from "uuid";
 import NumberRow from './NumberRow';
 import NumberForm from './NumberForm';
 import { produce } from 'immer';
 
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-let id = 0;
 
 class NumberTable extends React.Component {
     state = {
         numbers: [],
-        currentNumbers: {
-            number: randomNumber(1, 1000),
-            numId: id
-        },
+            number: '',
         SelectedNumbers: [],
         lockedNumbers: []
     }
 
     onAddClick = () => {
-        const { number, numId } = this.state.currentNumbers;
-        id++;
+        const num = Math.floor(Math.random() * 100) + 1;
         const nextState = produce(this.state, draft => {
-            draft.numbers.push({ number, numId })
-            draft.currentNumbers = {
-                number: randomNumber(1, 1000),
-                numId: id
-            }
+            draft.numbers.push({ num, id: uuidv4() });
         });
         this.setState(nextState);
     }
@@ -47,10 +35,10 @@ class NumberTable extends React.Component {
 
     onLockedClick = (n) => {
         const nextState = produce(this.state, draft => {
-            const isLocked = draft.lockedNumbers.some(x => x.numId === n.numId);
+            const isLocked = draft.lockedNumbers.some(x => num.numId === n.numId);
 
             if (isLocked) {
-                draft.lockedNumbers = draft.lockedNumbers.filter(x => x.numId !== n.numId);
+                draft.lockedNumbers = draft.lockedNumbers.filter(x => num.numId !== n.numId);
             } else {
                 draft.lockedNumbers.push(n);
             }
